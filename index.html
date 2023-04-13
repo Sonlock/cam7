@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Aplicación de Cámara</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Estilos para la previsualización de la cámara en pantalla completa */
+    #camara {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: black;
+      display: none;
+      z-index: 9999;
+    }
+
+    video {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Estilos para el botón de cerrar cámara */
+    #cerrarCamara {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 10000;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Aplicación de Cámara</h1>
+  <button id="activarCamara">Activar Cámara</button>
+  <script>
+    // Botón para activar la cámara
+    var btnActivarCamara = document.getElementById('activarCamara');
+    btnActivarCamara.addEventListener('click', function() {
+      // Acceder a la cámara del dispositivo
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(function(stream) {
+          var video = document.createElement('video');
+          video.srcObject = stream;
+          video.setAttribute('autoplay', true);
+          video.setAttribute('playsinline', true);
+          document.body.appendChild(video);
+          video.addEventListener('loadedmetadata', function() {
+            // Mostrar la previsualización de la cámara en pantalla completa
+            document.getElementById('camara').style.display = 'block';
+            document.getElementById('cerrarCamara').style.display = 'block';
+            video.play();
+          });
+        })
+        .catch(function(error) {
+          console.error('Error al acceder a la cámara:', error);
+        });
+    });
+
+    // Botón para cerrar la cámara
+    var btnCerrarCamara = document.getElementById('cerrarCamara');
+    btnCerrarCamara.addEventListener('click', function() {
+      var video = document.querySelector('video');
+      video.srcObject.getTracks()[0].stop();
+      video.remove();
+      document.getElementById('camara').style.display = 'none';
+      document.getElementById('cerrarCamara').style.display = 'none';
+    });
+  </script>
+  <div id="camara">
+    <video id="videoCamara"></video>
+  </div>
+  <button id="cerrarCamara">Cerrar Cámara</button>
+</body>
+</html>
